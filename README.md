@@ -24,14 +24,6 @@ qrcoder -data "https://example.com" -output qr.png -bg "#ffffff80"
 
 When no `-output` flag is provided, the QR code is rendered directly to stdout using Unicode half-block characters:
 
-```
-█▀▀▀▀▀█ ▀▀█▄ ███▄ █▀▀▀▀▀█
-█ ███ █  ▄▀  ▀▄█  █ ███ █
-█ ▀▀▀ █ █▄█▄▄  ▀▀ █ ▀▀▀ █
-▀▀▀▀▀▀▀ ▀▄▀▄█ █ █ ▀▀▀▀▀▀▀
-...
-```
-
 ## Image File Output
 
 Save QR codes as PNG or JPEG. Output format is inferred from the file extension and color values — PNG is used automatically when any color has transparency.
