@@ -368,7 +368,7 @@ var (
 	DiamondS       IShape = Diamond{}
 	StarS          IShape = Star{}
 	SmallDot       IShape = Dot{Radius: 0.5}
-	RoundedS       IShape = Rounded{CornerRadius: 0.45}
+	RoundedS       IShape = Rounded{CornerRadius: 0.2}
 	SquircleS      IShape = Squircle{Squint: 0.5}
-	RoundedNAShape IShape = NewBuilder().Rounded(0.3).NeighborAware(0.5, 1.0).Build()
+	RoundedNAShape IShape = NewBuilder().Rounded(0.2).NeighborAware(0.5, 1.0).Build()
 )
