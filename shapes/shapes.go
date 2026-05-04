@@ -113,13 +113,49 @@ func (r Rounded) Draw(ctx *standard.DrawContext) {
 	rBR := cornerRadius(baseR, botOpen, rightOpen)
 	rBL := cornerRadius(baseR, botOpen, leftOpen)
 
-	maxR := max4(rTL, rTR, rBR, rBL)
-
-	if maxR == 0 {
+	// If all corners are zero, just draw a rectangle.
+	if rTL == 0 && rTR == 0 && rBR == 0 && rBL == 0 {
 		ctx.DrawRectangle(x, y, float64(w), float64(h))
-	} else {
-		ctx.DrawRoundedRectangle(x, y, float64(w), float64(h), maxR)
+		ctx.SetColor(ctx.Color())
+		ctx.Fill()
+		return
 	}
+
+	// Manually trace the path with per-corner arcs.
+	// Start at top-left and go clockwise.
+	startX := x + rTL
+	startY := y
+	ctx.MoveTo(startX, startY)
+
+	// Top edge: line to top-right arc start
+	ctx.LineTo(x+float64(w)-rTR, y)
+	// Top-right arc
+	if rTR > 0 {
+		ctx.DrawArc(x+float64(w)-rTR, y+rTR, rTR, math.Pi*1.5, math.Pi*2.0)
+	}
+
+	// Right edge: line to bottom-right arc start
+	ctx.LineTo(x+float64(w), y+float64(h)-rBR)
+	// Bottom-right arc
+	if rBR > 0 {
+		ctx.DrawArc(x+float64(w)-rBR, y+float64(h)-rBR, rBR, 0, math.Pi*0.5)
+	}
+
+	// Bottom edge: line to bottom-left arc start
+	ctx.LineTo(x+rBL, y+float64(h))
+	// Bottom-left arc
+	if rBL > 0 {
+		ctx.DrawArc(x+rBL, y+float64(h)-rBL, rBL, math.Pi*0.5, math.Pi)
+	}
+
+	// Left edge: line back to top-left arc start
+	ctx.LineTo(x, y+rTL)
+	// Top-left arc
+	if rTL > 0 {
+		ctx.DrawArc(x+rTL, y+rTL, rTL, math.Pi, math.Pi*1.5)
+	}
+
+	ctx.ClosePath()
 	ctx.SetColor(ctx.Color())
 	ctx.Fill()
 }
@@ -136,20 +172,6 @@ func cornerRadius(base float64, a, b bool) float64 {
 		return base / 2.0
 	}
 	return 0
-}
-
-func max4(a, b, c, d float64) float64 {
-	m := a
-	if b > m {
-		m = b
-	}
-	if c > m {
-		m = c
-	}
-	if d > m {
-		m = d
-	}
-	return m
 }
 
 // Diamond draws a rotated square (rhombus) per cell.
@@ -346,7 +368,7 @@ var (
 	DiamondS       IShape = Diamond{}
 	StarS          IShape = Star{}
 	SmallDot       IShape = Dot{Radius: 0.5}
-	RoundedS       IShape = Rounded{CornerRadius: 0.3}
+	RoundedS       IShape = Rounded{CornerRadius: 0.45}
 	SquircleS      IShape = Squircle{Squint: 0.5}
 	RoundedNAShape IShape = NewBuilder().Rounded(0.3).NeighborAware(0.5, 1.0).Build()
 )
