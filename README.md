@@ -16,13 +16,21 @@ qrcoder -data "https://example.com" -output qr.png
 # Transparent background (alpha = 00)
 qrcoder -data "https://example.com" -output qr.png -bg "#00000000"
 
-# Partially transparent background (alpha = 80)
-qrcoder -data "https://example.com" -output qr.png -bg "#ffffff80"
+# Custom shape with neighbor-aware rounding
+qrcoder -data "https://example.com" -output qr.png -shape rounded-na
 ```
 
 ## Terminal Output
 
 When no `-output` flag is provided, the QR code is rendered directly to stdout using Unicode half-block characters:
+
+```
+█▀▀▀▀▀█ ▀▀█▄ ███▄ █▀▀▀▀▀█
+█ ███ █  ▄▀  ▀▄█  █ ███ █
+█ ▀▀▀ █ █▄█▄▄  ▀▀ █ ▀▀▀ █
+▀▀▀▀▀▀▀ ▀▄▀▄█ █ █ ▀▀▀▀▀▀▀
+...
+```
 
 ## Image File Output
 
@@ -37,10 +45,24 @@ qrcoder -data "https://example.com" -output qr.jpg -shape circle -width 12
 
 # Transparent background
 qrcoder -data "https://example.com" -output qr.png -bg "#00000000"
-
-# Semi-transparent background
-qrcoder -data "https://example.com" -output qr.png -bg "#00000080"
 ```
+
+## Shapes
+
+The `-shape` flag controls the cell shape. Shapes that adapt based on neighbours (like `rounded-na`) produce smoother, more organic-looking QR codes by merging shared edges.
+
+| Shape | Description |
+|-------|-------------|
+| `rect` | Default rectangular cells |
+| `circle` | Circular cells |
+| `dot` | Small dots (50% radius) |
+| `diamond` | Rotated square (rhombus) |
+| `star` | 5-pointed star |
+| `rounded` | Rounded rectangles with neighbour-aware corners |
+| `squircle` | Superellipse (between circle and rectangle) |
+| `rounded-na` | Rounded rectangles with neighbour-aware scaling |
+
+Shapes are composable via the `shapes.Builder` API for advanced customization.
 
 ## Color Format
 
@@ -61,7 +83,7 @@ When any color has an alpha value less than `ff`, the output is automatically sa
 | `-output` | *(none)* | Output file path; omit for terminal output |
 | `-fg` | `#000000` | Foreground color (hex, RGB or RGBA) |
 | `-bg` | `#ffffff` | Background color (hex, RGB or RGBA) |
-| `-shape` | `rect` | Cell shape: `rect` or `circle` |
+| `-shape` | `rect` | Cell shape (see table above) |
 | `-width` | `8` | Block width in pixels |
 | `-border-top` | `4` | Top border width in blocks |
 | `-border-right` | `4` | Right border width in blocks |
@@ -87,3 +109,4 @@ just clean    # remove build artifacts
 
 - [yeqown/go-qrcode/v2](https://github.com/yeqown/go-qrcode) — QR code generation core
 - [yeqown/go-qrcode/writer/standard](https://github.com/yeqown/go-qrcode/tree/main/writer/standard) — image file writer
+- [fogleman/gg](https://github.com/fogleman/gg) — 2D vector graphics (used by custom shapes)

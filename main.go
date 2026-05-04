@@ -11,6 +11,8 @@ import (
 
 	"github.com/yeqown/go-qrcode/v2"
 	"github.com/yeqown/go-qrcode/writer/standard"
+
+	"qrcoder/shapes"
 )
 
 func main() {
@@ -19,7 +21,7 @@ func main() {
 	output := flag.String("output", "", "Output file path (e.g., qrcode.png). If omitted, prints to terminal.")
 	fgColor := flag.String("fg", "#000000", "Foreground color as hex string (e.g., '#000000' or '#000000ff')")
 	bgColor := flag.String("bg", "#ffffff", "Background color as hex string (e.g., '#ffffff' or '#ffffff00' for transparent)")
-	shape := flag.String("shape", "rect", "Cell shape: 'rect' (default) or 'circle'")
+	shape := flag.String("shape", "rect", "Cell shape: 'rect', 'circle', 'diamond', 'star', 'dot', 'rounded', or 'rounded-na' (neighbor-aware)")
 	qrWidth := flag.Uint("width", 8, "Width of each QR block in pixels")
 	borderTop := flag.Int("border-top", 4, "Top border width in blocks")
 	borderRight := flag.Int("border-right", 4, "Right border width in blocks")
@@ -179,9 +181,30 @@ func saveToFile(content, outputPath, fgColor, bgColor, shape string,
 		opts = append(opts, standard.WithBuiltinImageEncoder(standard.JPEG_FORMAT))
 	}
 
-	if strings.EqualFold(shape, "circle") {
-		opts = append(opts, standard.WithCircleShape())
+	var cellShape shapes.IShape
+	switch shape {
+	case "rect":
+		cellShape = shapes.Rect
+	case "circle":
+		cellShape = shapes.Circ
+	case "diamond":
+		cellShape = shapes.DiamondS
+	case "star":
+		cellShape = shapes.StarS
+	case "dot":
+		cellShape = shapes.SmallDot
+	case "rounded":
+		cellShape = shapes.RoundedS
+	case "squircle":
+		cellShape = shapes.SquircleS
+	case "rounded-na":
+		cellShape = shapes.RoundedNAShape
+	default:
+		fmt.Fprintf(os.Stderr, "error: unknown shape %q\n", shape)
+		os.Exit(1)
 	}
+
+	opts = append(opts, standard.WithCustomShape(cellShape))
 
 	// Create the QR code
 	qrc, err := qrcode.New(content)
