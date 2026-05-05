@@ -195,6 +195,8 @@ func saveToFile(content, outputPath, fgColor, bgColor, shape string,
 		cellShape = shapes.SmallDot
 	case "rounded":
 		cellShape = shapes.RoundedS
+	case "liquid":
+		cellShape = shapes.LiquidS
 	case "squircle":
 		cellShape = shapes.SquircleS
 	case "rounded-na":

@@ -10,6 +10,7 @@ import (
 	"math"
 
 	"github.com/yeqown/go-qrcode/writer/standard"
+	qshapes "github.com/yeqown/go-qrcode/writer/standard/shapes"
 )
 
 // IShape is an alias for the go-qrcode shape interface.
@@ -172,6 +173,17 @@ func cornerRadius(base float64, a, b bool) float64 {
 		return base / 2.0
 	}
 	return 0
+}
+
+// Liquid wraps the library's LiquidBlock for seamless organic blobs.
+type Liquid struct{}
+
+func (l Liquid) Draw(ctx *standard.DrawContext){
+	qshapes.LiquidBlock()(ctx)
+}
+
+func (l Liquid) DrawFinder(ctx *standard.DrawContext) {
+	qshapes.RoundedFinder()(ctx)
 }
 
 // Diamond draws a rotated square (rhombus) per cell.
@@ -368,7 +380,8 @@ var (
 	DiamondS       IShape = Diamond{}
 	StarS          IShape = Star{}
 	SmallDot       IShape = Dot{Radius: 0.5}
-	RoundedS       IShape = Rounded{CornerRadius: 0.2}
+	RoundedS       IShape = Rounded{CornerRadius: 0.3}
+	LiquidS        IShape = Liquid{}
 	SquircleS      IShape = Squircle{Squint: 0.5}
 	RoundedNAShape IShape = NewBuilder().Rounded(0.2).NeighborAware(0.5, 1.0).Build()
 )
